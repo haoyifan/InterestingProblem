@@ -9,5 +9,8 @@ void rookieHandler() {
 
 int main() {
 	set_new_handler(rookieHandler);
+	for(int i = 0; i < 100; ++i)
+		malloc(std::numeric_limits<int>::max());
+	cout << "after malloc" << endl;
 	::new int[std::numeric_limits<int>::max() * sizeof(int)];
 }
