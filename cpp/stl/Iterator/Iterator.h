@@ -9,7 +9,9 @@
 
 namespace rookieiterator {
 	template<class T>
-		class RookieList;
+	class RookieList;
+	template<class T>
+	class RookieVector;
 }
 
 namespace rookieiterator {
@@ -197,7 +199,8 @@ namespace rookieiterator {
 					_size = other._size;
 					_capacity = other._capacity;
 					other._arr = nullptr;
-					other._arr = 0;
+					other._size = 0;
+					other._capacity = 0;
 				}
 				return *this;
 			}
@@ -209,6 +212,13 @@ namespace rookieiterator {
 			// NOTE: not consider exception safety
 			RookieVector& push_back(const T& val) {
 				_os << "push back " << val << std::endl;
+				if(_capacity == 0) {
+					assert(_arr == nullptr);
+					_arr = new T[INIT_CAP];
+					_size = 0;
+					_capacity = INIT_CAP;
+				}
+
 				if(_size == _capacity) {
 					_capacity *= 2;
 					T* new_arr = new T[_capacity];	
@@ -251,6 +261,8 @@ namespace rookieiterator {
 				os << std::endl;
 			}
 
+			// NOTE: Iterator for vector can be implemented by raw pointer
+			// This implementation is just for fun and exercise
 			class Iterator {
 				friend class RookieVector;
 
