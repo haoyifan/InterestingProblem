@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 #include "base.hpp"
-#include "digitsCntBenchmark/strengthreduction.hpp"
+#include "digitsCnt/strengthreduction.hpp"
 
 namespace rookiebench {
 	template<class T, class BT>
@@ -14,7 +14,7 @@ namespace rookiebench {
 				auto end = buf + len;
 				*end = '\0';
 				while(val) {
-					*end-- = '0' + val % 10;
+					*--end = '0' + val % 10;
 					val /= 10;
 				}
 				return len;

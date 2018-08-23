@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 #include "base.hpp"
-#include "digitsCntBenchmark/search.hpp"
+#include "digitsCnt/search.hpp"
 
 namespace rookiebench {
 	template<class T, class BT>

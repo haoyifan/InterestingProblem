@@ -7,7 +7,7 @@ TARGET += u64ToAsciiBench
 
 all:	$(TARGET)
 
-digitsCntBench:	${INC_DIR}/digitsCntBenchmark/main.cpp
+digitsCntBench:	${INC_DIR}/digitsCnt/main.cpp
 	$(GXX) $(FLAGS) $< -o $@
 
 u64ToAsciiBench:	${INC_DIR}/u64ToAscii/main.cpp
