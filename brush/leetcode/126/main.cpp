@@ -1,55 +1,97 @@
+// compile with -std=c++14 option
+
 #include <queue>
 #include <vector>
+#include <algorithm>
+#include <iostream>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
+#include <limits>
 
 using namespace std;
 
+// Correct solution but LTE
 class Solution {
-	public:
+	private:
+
+		unordered_map<string, vector<string>> m;
+
 		bool diffByOne(const string& a, const string& b) {
-			int diff = 0;
-			for(int i = 0; i < (int)a.size(); ++i) {
-				if(a[i] != b[i])
-					diff++;
+			int cnt = 0;
+			for(size_t i = 0; i < a.size(); ++i) {
+				if(a[i] != b[i]) cnt++;
 			}
-			return diff == 1;
+			return cnt == 1;
 		}
 
-		vector<vector<string>> findLadders(string start, string end, unordered_set<string> &dict) {
-			queue<string> q;
-			q.push(start);
-			unordered_map<string, vector<string>> m; // vector end with key
-			m[start] = vector<string>({start});
-			vector<vector<string>> result;
+		void construct_neighbor(const string& start, vector<string> v) {
 
-			while(!q.empty()) {
-				int size = q.size();
-				while(size-- > 0) {
-					auto curr = q.front(); q.pop();
-					if(diffByOne(curr, end)) {
-						vector<string> newvec = m[curr];
-						newvec.push_back(end);
-						result.push_back(newvec);
-						continue;
+			v.push_back(start);
+
+			for(auto& s1 : v) {
+				for(auto& s2 : v) {
+					if(s1 == s2) continue;
+
+					if(diffByOne(s1, s2)) {
+						m[s1].push_back(s2);
 					}
-					unordered_set<string> toDelete;
-					for(auto& s : dict) {
-						if(diffByOne(curr, s)) {
-							toDelete.insert(s);
-							vector<string> newvec = m[curr];
-							newvec.push_back(s);
-							m[s] = newvec;
-							q.push(s);
-						}
-					}
-					for(auto& s : toDelete)
-						dict.erase(s);
 				}
 			}
+
+			return;
+		}
+
+		void dfs(vector<vector<string>>& result, vector<string>& curr, unordered_set<string>& visited, const string& end,
+				const vector<string>& v) {
+			if(curr.back() == end) {
+				result.push_back(curr);
+				return;
+			}
+			for(auto& s : v) {
+				if(visited.find(s) != visited.end()) continue;
+				if(diffByOne(curr.back(), s)) {
+					curr.push_back(s);
+					visited.insert(s);
+
+					dfs(result, curr, visited, end, v);
+
+					visited.erase(s);
+					curr.pop_back();
+				}
+			}
+		}
+
+	public:
+		vector<vector<string>> findLadders(string start, string end, vector<string> &dict) {
+			construct_neighbor(start, dict);
+			vector<vector<string>> result;
+			vector<string> curr;
+			unordered_set<string> visited;
+
+			curr.push_back(start);
+			visited.insert(start);
+
+			dfs(result, curr, visited, end, dict);
+			int size = std::numeric_limits<int>::max();
+			for(auto& v: result)
+				if(v.size() < size)
+					size = v.size();
+
+			result.erase(remove_if(result.begin(), result.end(), [&](auto& v) {return v.size() != size;}), result.end());
+
 			return result;
 		}
 };
 
-int main() {}
+int main() {
+	string start = "hit";
+	string end = "cog";
+	vector<string> s{"hot","dot","dog","lot","log","cog"};
+	auto res = Solution().findLadders(start, end, s);
+	for(auto& v : res) {
+		for(auto& x : v)
+			cout << x << " ";
+		cout << endl;
+	}
+}
